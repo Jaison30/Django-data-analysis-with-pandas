@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Django App</title>
+    <!-- Le styles -->
+    {% load static %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
+  </head>
+{% block css %}
+{% endblock %}
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#" style="color: #ffffff;">Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h2>{{total_cases}}</h2>
+        <p>Coronavirus Cases</p>
+      </div>
+
+      <!-- Example row of columns -->
+      {% block content %}
+          {% endblock %}
+
+      <hr>
+
+      <footer>
+        <p>© Django</p>
+      </footer>
+
+    </div> <!-- /container -->
+</body>
+{% block script %}
+{% endblock %}
+</html>

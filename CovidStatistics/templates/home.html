@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="//github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
+<style type="text/css">
+#container {
+    height: 500px;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.highcharts-tooltip>span {
+    padding: 10px;
+    white-space: normal !important;
+    width: 200px;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+.f32 .flag {
+    vertical-align: middle !important;
+}
+</style>
+{% endblock %}
+{% block content %}
+<h3>Confirmed cases by country</h3>
+<hr>
+<ul>
+    {% for obj in users %}
+    <li><a href="#">Name: {{obj.name}}</a></li>
+    {% endfor %}
+</ul>
+
+<div class="row">
+    <div class="col-lg-4" style="float:left;max-height:650px;max-width:400px;overflow:scroll;overflow-x:hidden;">
+        <div>
+            <div> 
+                <canvas id="myChart" style="height: 6650px; width: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6" style="float: left;">
+                <br>
+                <br>
+                <div id="mapChart" style="height: 650px; width: 800px;"></div>
+            </div>
+<div class="col-md-4">
+    One of three columns
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/data.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'horizontalBar',
+
+        // The data for our dataset
+        data: {
+            labels: {{ country_names|safe }},
+            datasets: [{
+                data: {{ values|safe }},
+                label: 'Infected Counts',
+                barThickness:'flex',
+                backgroundColor:'#03a9fc',
+
+            }]
+        }
+
+});
+
+// Map Charts
+// Initiate the chart
+Highcharts.mapChart('mapChart', {
+
+    chart: {
+        map: 'custom/world'
+    },
+
+    title: {
+        text: 'World Map COVID-19 Infection '
+    },
+
+    legend: {
+        title: {
+            text: 'Infected Population',
+            style: {
+                color: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.legend &&
+                    Highcharts.defaultOptions.legend.title &&
+                    Highcharts.defaultOptions.legend.title.style &&
+                    Highcharts.defaultOptions.legend.title.style.color
+                ) || 'black'
+            }
+        }
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
+        }
+    },
+
+    tooltip: {
+        backgroundColor: 'none',
+        borderWidth: 0,
+        shadow: false,
+        useHTML: true,
+        padding: 0,
+        pointFormat: '<span class="f32"><span class="flag {point.properties.hc-key}">' +
+            '</span></span> {point.name}<br>' +'<span><h4>{point.value}</h4></span>',
+        positioner: function () {
+            return { x: 0, y: 250 };
+        }
+    },
+
+    colorAxis: {
+        min: 1,
+        max: {{max_values|safe}},
+        type: 'logarithmic'
+    },
+
+    series: [{
+        data: {{data_for_map|safe}},
+        joinBy: ['iso-a3', 'code3'],
+        name: 'Infected Counts',
+        states: {
+            hover: {
+                color: '#a4edba'
+            }
+        }
+    }]
+});
+</script>
+{% endblock %}
